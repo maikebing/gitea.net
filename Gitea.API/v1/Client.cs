@@ -44,7 +44,7 @@ namespace Gitea.API.v1
         /// The default TCP port.
         /// </summary>
         public const int DEFAULT_PORT = 3000;
-
+ 
         /// <summary>
         /// Initializes a new instance of that class.
         /// </summary>
@@ -92,6 +92,20 @@ namespace Gitea.API.v1
             Authorizer = authorizer;
 
             SetupBaseUrl(host, port, isSecure);
+            SetupEndpoints();
+        }
+
+        public Client(string username, string password, Uri uri)
+        {
+
+            Authorizer = new BasicAuth() { Username = username, Password = password };
+
+            if (uri.Port < IPEndPoint.MinPort || uri.Port > IPEndPoint.MaxPort)
+            {
+                throw new ArgumentOutOfRangeException(nameof(uri.Port));
+            }
+  
+            BaseUrl = new Uri(uri, "api/v1/");
             SetupEndpoints();
         }
 
