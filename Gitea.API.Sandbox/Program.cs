@@ -29,78 +29,48 @@
 
 
 using Gitea.API.v1;
-using System;
-using System.Net;
-using System.Threading.Tasks;
 
-namespace Gitea.API.Sandbox
+
+ 
+
+
+            using (var client = new Client("maikebing", "58a42dbc446a85af6ba547dd800e0c07e8c020bd", "gitea.com",80,true))
 {
-    internal class Program
+    var version = await client.GetVersion();
+    if (version != null)
     {
-        static Program()
-        {
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType.Ssl3 |
-                                                    SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12);
-        }
 
-        private static void Main(string[] args)
-        {
-            try
-            {
-                RunAsync().Wait();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.GetBaseException());
-            }
+    }
 
-            Console.WriteLine();
-            Console.WriteLine("===== ENTER =====");
-            Console.ReadLine();
-        }
+    /* var newUser = await client.Users.New()
+        .Email("marcel.kloubert@gmx.net")
+        .UserName("kloubi")
+        .Password("P@assword123!")
+        .FullName("Houbi The Kloubi")
+        .SendNotification()
+        .Create();
 
-        private static async Task RunAsync()
-        {
-            using (var client = new Client(username: Credentials.User, password: Credentials.Password,
-                                           host: Credentials.Host, port: Credentials.Port, isSecure: Credentials.IsSecure))
-            {
-                var version = await client.GetVersion();
-                if (version != null)
-                {
 
-                }
+    var kloubi = await client.Users.GetByUsername("kloubi");
+    kloubi = await kloubi.Update()
+        .Email("marcel.kloubert@gmx.net")
+        .Password("A_New_P@ssword_123 !")
+        .FullName("The Kloubi")
+        .IsActive(false)
+        .MakeAdmin()
+        .Location("Aachen")
+        .NoRepositoryCreationLimit()
+        .Save();
 
-                /* var newUser = await client.Users.New()
-                    .Email("marcel.kloubert@gmx.net")
-                    .UserName("kloubi")
-                    .Password("P@assword123!")
-                    .FullName("Houbi The Kloubi")
-                    .SendNotification()
-                    .Create();
+    await kloubi.Delete();
+    */
 
-                
-                var kloubi = await client.Users.GetByUsername("kloubi");
-                kloubi = await kloubi.Update()
-                    .Email("marcel.kloubert@gmx.net")
-                    .Password("A_New_P@ssword_123 !")
-                    .FullName("The Kloubi")
-                    .IsActive(false)
-                    .MakeAdmin()
-                    .Location("Aachen")
-                    .NoRepositoryCreationLimit()
-                    .Save();
+    var user = await client.Users.GetCurrent();
+    if (user != null)
+    {
+        var r = await user.Repositories.Create().Name("test1111").Description("afsddfa").MakePrivate(true)
+            .MakeAutoInit(false).Start();
 
-                await kloubi.Delete();
-                */
-
-                var user = await client.Users.GetCurrent();
-                if (user != null)
-                {
-                    var r = await user.Repositories.Create().Name("test1111").Description("afsddfa").MakePrivate(true)
-                        .MakeAutoInit(false).Start();
-                  
-                }
-            }
-        }
     }
 }
+
